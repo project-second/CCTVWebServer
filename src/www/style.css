@@ -1,0 +1,298 @@
+/* CSS variables for Black & White Minimalist Design System */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --border-color: #e5e5e5;
+    --hover-bg: #f5f5f5;
+    --active-bg: #e0e0e0;
+    --card-bg: #fafafa;
+    --accent-color: #000000;
+    --accent-text: #ffffff;
+    --border-radius: 12px;
+    --transition-speed: 0.25s;
+    --sidebar-width: 250px;
+}
+
+[data-theme="dark"] {
+    --bg-color: #0c0c0c;
+    --text-color: #ffffff;
+    --border-color: #222222;
+    --hover-bg: #1a1a1a;
+    --active-bg: #2d2d2d;
+    --card-bg: #121212;
+    --accent-color: #ffffff;
+    --accent-text: #000000;
+}
+
+/* Base Resets & Layout */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Sidebar Navigation Grid */
+aside {
+    width: var(--sidebar-width);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    background-color: var(--bg-color);
+    transition: width var(--transition-speed), border-color var(--transition-speed);
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    margin-bottom: 48px;
+    text-transform: uppercase;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    list-style: none;
+    flex-grow: 1;
+}
+
+.nav-links li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed), transform 0.1s;
+}
+
+.nav-links li a:hover {
+    background-color: var(--hover-bg);
+    transform: translateX(4px);
+}
+
+.nav-links li a.active {
+    background-color: var(--active-bg);
+    font-weight: 700;
+}
+
+/* Top Header & Main Content Area */
+main {
+    margin-left: var(--sidebar-width);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 40px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-badge {
+    font-weight: 600;
+    background-color: var(--hover-bg);
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+}
+
+/* Theme Toggle switch styling */
+.btn {
+    background-color: var(--accent-color);
+    color: var(--accent-text);
+    border: 1px solid var(--accent-color);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.btn:hover {
+    opacity: 0.8;
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--hover-bg);
+}
+
+.btn-danger {
+    background-color: transparent;
+    color: #ff3333;
+    border: 1px solid #ff3333;
+}
+
+.btn-danger:hover {
+    background-color: rgba(255, 51, 51, 0.1);
+}
+
+/* Dynamic Pages Panel switching */
+.page {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card and Forms UI System */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 32px;
+    border-radius: var(--border-radius);
+    margin-bottom: 24px;
+    max-width: 600px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border-radius: var(--border-radius);
+    outline: none;
+    transition: border-color var(--transition-speed);
+}
+
+input:focus {
+    border-color: var(--text-color);
+}
+
+/* Responsive Layouts / Media Queries */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    aside {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px;
+    }
+    .logo {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .nav-links {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    main {
+        margin-left: 0;
+        padding: 20px;
+    }
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    text-align: left;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+    background-color: var(--hover-bg);
+}
+
+/* Video Canvas wrapper */
+.video-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 800px;
+    width: 100%;
+}
+
+#camCanvas {
+    width: 100%;
+    background-color: #000;
+    aspect-ratio: 16/9;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #777;
+    margin-right: 8px;
+}
+
+.status-dot.active {
+    background-color: #00ff00;
+    box-shadow: 0 0 8px #00ff00;
+}

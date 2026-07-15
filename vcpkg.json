@@ -1,0 +1,20 @@
+{
+    "name": "railvms",
+    "version-string": "1.0.0",
+    "builtin-baseline": "63bb8e44c140791580201d29c0c16985a88969cf",
+    "dependencies": [
+        "boost-asio",
+        "boost-system",
+        "boost-beast",
+        "boost-json",
+        "sqlite3",
+        {
+            "name": "ffmpeg",
+            "features": [
+                "openssl"
+            ]
+        },
+        "nlohmann-json",
+        "yaml-cpp"
+    ]
+}

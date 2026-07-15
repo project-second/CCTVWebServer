@@ -1,0 +1,5 @@
+{
+  "db_path": "vms_server.db",
+  "master_secret": "VE_SUPER_SECURE_SECRET_KEY_FOR_DATA_ENCRYPTION_2026",
+  "server_port": "8080"
+}

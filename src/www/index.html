@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VE - Video Relayer & Control</title>
+    <!-- Modern Stark Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Split CSS Stylesheet -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside>
+        <div class="logo">VE</div>
+        <ul class="nav-links">
+            <li><a href="#" class="active" onclick="navigateTo('home')" id="nav-home">Home</a></li>
+            <li><a href="#" onclick="navigateTo('login')" id="nav-login">Log In</a></li>
+            <li><a href="#" onclick="navigateTo('register')" id="nav-register">Register</a></li>
+            <li><a href="#" onclick="navigateTo('mypage')" id="nav-mypage" style="display:none;">My Page</a></li>
+            <li><a href="#" onclick="navigateTo('admin')" id="nav-admin" style="display:none;">Admin Control</a></li>
+            <li><a href="#" onclick="navigateTo('settings')" id="nav-settings" style="display:none;">Settings</a></li>
+            <li><a href="#" onclick="navigateTo('cam')" id="nav-cam" style="display:none;">Cam Stream</a></li>
+        </ul>
+    </aside>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main>
+        <header>
+            <div class="profile-container">
+                <span class="user-badge" id="header-user-status">Guest</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary" onclick="toggleTheme()">Theme Toggle</button>
+                <button class="btn btn-danger" onclick="logout()" id="logout-btn" style="display:none;">Log Out</button>
+            </div>
+        </header>
+
+        <!-- PAGE Content containers -->
+
+        <!-- 1. HOME PAGE -->
+        <section id="page-home" class="page active">
+            <h1 style="margin-bottom: 20px; font-weight:900; font-size:40px;">RTSP WebSocket Multiplexer</h1>
+            <p style="margin-bottom: 30px; font-size: 18px; font-weight:300;">Welcome to VE. Real-time RTSP packet streaming and user management system built with modern C++.</p>
+            <div class="card">
+                <h2 style="margin-bottom: 12px;">System Access</h2>
+                <p id="home-intro-text">Please log in or register to get started. Registration requires administrator approval.</p>
+            </div>
+        </section>
+
+        <!-- 2. LOGIN PAGE -->
+        <section id="page-login" class="page">
+            <h1 style="margin-bottom: 24px;">Log In</h1>
+            <div class="card">
+                <form onsubmit="event.preventDefault(); submitLogin();">
+                    <div class="form-group">
+                        <label for="login-id">ID</label>
+                        <input type="text" id="login-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-pw">Password</label>
+                        <input type="password" id="login-pw" required>
+                    </div>
+                    <button type="submit" class="btn">Log In</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 3. REGISTER PAGE -->
+        <section id="page-register" class="page">
+            <h1 style="margin-bottom: 24px;">Register Account</h1>
+            <div class="card">
+                <form onsubmit="event.preventDefault(); submitRegister();">
+                    <div class="form-group">
+                        <label for="reg-id">ID</label>
+                        <input type="text" id="reg-id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-username">Username</label>
+                        <input type="text" id="reg-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-pw">Password</label>
+                        <input type="password" id="reg-pw" required>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 4. MY PAGE -->
+        <section id="page-mypage" class="page">
+            <h1 style="margin-bottom: 24px;">My Profile</h1>
+            <div class="card">
+                <form onsubmit="event.preventDefault(); updateProfile();">
+                    <div class="form-group">
+                        <label>ID (Cannot Change)</label>
+                        <input type="text" id="my-id" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="my-username">Username</label>
+                        <input type="text" id="my-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="my-pw">New Password (Leave blank to keep same)</label>
+                        <input type="password" id="my-pw">
+                    </div>
+                    <button type="submit" class="btn">Save Changes</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 5. ADMIN CONTROL PAGE -->
+        <section id="page-admin" class="page">
+            <h1 style="margin-bottom: 24px;">Admin Control Center</h1>
+            
+            <!-- User approvals and bans -->
+            <div class="card" style="max-width: 100%;">
+                <h2 style="margin-bottom: 16px;">Users Management</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Filled by AJAX -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RTSP configuration management -->
+            <div class="card" style="max-width: 100%;">
+                <h2 style="margin-bottom: 16px;">RTSP Config & Stream Broadcast</h2>
+                <form onsubmit="event.preventDefault(); submitRTSPConfig();" style="display:flex; flex-direction:column; gap:16px; margin-bottom:20px;">
+                    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:16px;">
+                        <div class="form-group">
+                            <label for="rtsp-name">Camera Name</label>
+                            <input type="text" id="rtsp-name" placeholder="e.g. Lobby Cam" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rtsp-url">RTSP Stream URL</label>
+                            <input type="text" id="rtsp-url" placeholder="rtsp://username:password@ip:port/stream" required>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn">Save & Start Stream</button>
+                        <button type="button" class="btn btn-secondary" onclick="stopRTSPStream()">Stop Stream</button>
+                    </div>
+                </form>
+                
+                <h3 style="margin-top:20px; margin-bottom:10px;">Registered Stream</h3>
+                <div id="rtsp-status-text">No RTSP Stream Registered.</div>
+            </div>
+        </section>
+
+        <!-- 6. SETTINGS PAGE -->
+        <section id="page-settings" class="page">
+            <h1 style="margin-bottom: 24px;">Settings</h1>
+            <div class="card">
+                <h2 style="margin-bottom: 16px;">Theme Mode</h2>
+                <p style="margin-bottom: 16px; font-weight:300;">Toggle between high-contrast light and dark views.</p>
+                <button class="btn" onclick="toggleTheme()">Change Theme Mode</button>
+            </div>
+        </section>
+
+        <!-- 7. CAM PAGE (WS Relay Reply View) -->
+        <section id="page-cam" class="page">
+            <h1 style="margin-bottom: 24px;">WebSocket Cam Relay</h1>
+            <div class="video-container">
+                <div style="display: flex; align-items:center;">
+                    <span class="status-dot" id="stream-status-dot"></span>
+                    <span id="stream-status-label" style="font-weight: 500;">Offline</span>
+                </div>
+                <!-- Dynamic rendering canvas for WebCodecs -->
+                <canvas id="camCanvas"></canvas>
+                <div>
+                    <button class="btn" onclick="connectWebSocketStream()">Connect Webhook</button>
+                    <button class="btn btn-secondary" onclick="disconnectWebSocketStream()">Disconnect</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Split Javascript Application -->
+    <script src="/app.js"></script>
+</body>
+</html>
