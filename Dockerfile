@@ -75,7 +75,11 @@ RUN vcpkg install --triplet=arm64-linux-cross
 # 2. 소스코드 전체 복사
 COPY . .
 
-# 3. CMake 설정 및 빌드 (탐색 경로 완전 격리 해제)
+# 3. vcpkg pkg-config 및 CMake 모듈 탐색 경로 환경변수 설정
+ENV PKG_CONFIG_PATH="/app/vcpkg_installed/arm64-linux-cross/lib/pkgconfig"
+ENV CMAKE_PREFIX_PATH="/app/vcpkg_installed/arm64-linux-cross"
+
+# CMake 설정 및 빌드
 RUN cmake -B build -S . \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
@@ -87,6 +91,8 @@ RUN cmake -B build -S . \
     -DVCPKG_TARGET_TRIPLET=arm64-linux-cross \
     -DVCPKG_HOST_TRIPLET=x64-linux \
     -DVCPKG_MANIFEST_MODE=OFF \
+    -DCMAKE_MODULE_PATH="/app/cmake" \
+    -DCMAKE_PREFIX_PATH="/app/vcpkg_installed/arm64-linux-cross" \
     -DCMAKE_FIND_ROOT_PATH="/app/vcpkg_installed/arm64-linux-cross;/usr/aarch64-linux-gnu" \
     -DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER \
     -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
