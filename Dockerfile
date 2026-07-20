@@ -1,30 +1,56 @@
 # ==========================================
-# 1. Builder Stage (크로스 컴파일 환경)
+# 1. Builder Stage (모든 호스트 개발 도구 통합)
 # ==========================================
 FROM ubuntu:24.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# 필수 빌드 도구 및 ARM64 크로스 컴파일러 설치
+# vcpkg 및 오픈소스 포트(FFmpeg, OpenSSL, Boost 등)가 요구하는 모든 빌드 도구 일괄 설치
 RUN apt-get update && apt-get install -y \
+    # [컴파일러 & 기본 도구]
     build-essential \
     crossbuild-essential-arm64 \
     gcc-aarch64-linux-gnu \
     g++-aarch64-linux-gnu \
+    gfortran-aarch64-linux-gnu \
+    # [빌드 시스템]
     cmake \
     ninja-build \
+    meson \
+    make \
+    autoconf \
+    autoconf-archive \
+    automake \
+    libtool \
+    pkg-config \
+    # [스크립트 언어 & 파이썬 생태계 (Meson, OpenSSL 등 필수)]
+    python3 \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    python3-jinja2 \
+    perl \
+    ruby \
+    # [어셈블러 & 파서/파서 제너레이터 (FFmpeg, GLib, Vulkan 등 필수)]
+    nasm \
+    yasm \
+    flex \
+    bison \
+    gperf \
+    gettext \
+    autopoint \
+    texinfo \
+    # [유틸리티 & 네트워크]
     git \
     curl \
+    wget \
     zip \
     unzip \
     tar \
-    pkg-config \
-    nasm \
-    perl \
-    make \
-    autoconf \
-    automake \
-    libtool \
+    ca-certificates \
+    # [타겟 커널 헤더]
+    linux-libc-dev \
+    linux-libc-dev-arm64-cross \
     && rm -rf /var/lib/apt/lists/*
 
 # vcpkg 설치
@@ -42,14 +68,14 @@ RUN echo 'set(VCPKG_TARGET_ARCHITECTURE arm64)' > /opt/vcpkg/triplets/arm64-linu
 
 WORKDIR /app
 
-# vcpkg 패키지 미리 설치 (Docker 캐시 활용)
+# 1. vcpkg.json 복사 후 패키지 미리 빌드 (arm64-linux-cross 전용)
 COPY vcpkg.json ./
 RUN vcpkg install --triplet=arm64-linux-cross
 
-# 프로젝트 전체 소스코드 복사
+# 2. 소스코드 전체 복사
 COPY . .
 
-# CMake 설정 및 빌드 (핵심 탐색 옵션 통합)
+# 3. CMake 설정 및 빌드 (탐색 경로 완전 격리 해제)
 RUN cmake -B build -S . \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
@@ -70,13 +96,13 @@ RUN cmake -B build -S . \
 RUN cmake --build build
 
 # ==========================================
-# 2. Runtime Stage (최종 실행 이미지)
+# 2. Runtime Stage (라즈베리 파이용 실행 이미지)
 # ==========================================
 FROM ubuntu:24.04 AS runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# SSL 통신을 위한 인증서 및 기본 런타임 의존성 설치
+# SSL 통신 및 기본 런타임 호환성 패키지
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
