@@ -56,19 +56,21 @@ RUN vcpkg install
 # 소스 코드 복사 및 CMake 빌드
 COPY . .
 
-RUN cmake -B build -S . \
+    RUN cmake -B build -S . \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_SYSTEM_NAME=Linux \
     -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
     -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc \
     -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ \
-    -DCMAKE_FIND_ROOT_PATH=/usr/aarch64-linux-gnu \
     -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
     -DVCPKG_TARGET_TRIPLET=arm64-linux-cross \
     -DVCPKG_HOST_TRIPLET=x64-linux \
     -DVCPKG_MANIFEST_MODE=OFF \
-    -DVCPKG_INSTALLED_DIR=/app/vcpkg_installed
+    -DVCPKG_INSTALLED_DIR=/app/vcpkg_installed \
+    -DCMAKE_FIND_ROOT_PATH="/app/vcpkg_installed/arm64-linux-cross;/usr/aarch64-linux-gnu" \
+    -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=BOTH \
+    -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
 
 RUN cmake --build build
 
