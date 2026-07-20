@@ -66,7 +66,10 @@ RUN cmake -B build -S . \
     -DCMAKE_FIND_ROOT_PATH=/usr/aarch64-linux-gnu \
     -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
     -DVCPKG_TARGET_TRIPLET=arm64-linux-cross \
-    -DVCPKG_HOST_TRIPLET=x64-linux
+    -DVCPKG_HOST_TRIPLET=x64-linux \
+    -DVCPKG_MANIFEST_MODE=OFF \
+    -DVCPKG_INSTALLED_DIR=/app/vcpkg_installed
+
 RUN cmake --build build
 
 # ========================================================
